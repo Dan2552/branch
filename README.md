@@ -8,3 +8,10 @@ The branch will warn if you have local changes or if the remote branch has diver
 
 Usage: `branch my-new-branch`
 ![Screenshot](https://raw.githubusercontent.com/Dan2552/branch/master/screenshot.png "Screenshot")
+
+Installation
+============
+```
+curl https://raw.githubusercontent.com/Dan2552/branch/master/branch > /usr/local/bin/branch
+chmod +x /usr/local/bin/branch
+```
