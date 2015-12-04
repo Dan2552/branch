@@ -23,8 +23,16 @@ question_if_empty() {
   fi
 }
 
+fetch() {
+  git fetch > /dev/null 2>&1
+  if [[ $? != 0 ]]; then
+    echo "Something went wrong while fetching... How's your internet connection?"
+    exit 1
+  fi
+}
+
 reset() {
-  git fetch > /dev/null
+  fetch
   git add . -A
   git reset --hard origin/$1 > /dev/null 2> /dev/null
   if [[ $? == 0 ]]; then
@@ -49,6 +57,8 @@ prompt_continue_anyway() {
 prompt_keep_local() {
   question_if_empty remote "Continue anyway? Changes will be lost. (remote|local) :" "remote"
   if [[ $remote != "remote" ]]; then
+    echo ""
+    echo "Using local branch (user specified)"
     exit 0
   fi
 }
@@ -123,4 +133,3 @@ reset_local
 switch_branch $branch
 detect_ahead
 reset $branch
-
