@@ -23,6 +23,10 @@ question_if_empty() {
   fi
 }
 
+get_current_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
+}
+
 fetch() {
   git fetch > /dev/null 2>&1
   if [[ $? != 0 ]]; then
@@ -115,21 +119,33 @@ switch_branch() {
     git checkout -b $1 > /dev/null 2> /dev/null
     git branch --set-upstream-to=origin/$1 > /dev/null 2> /dev/null
   fi
-  current_branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+  current_branch=$(get_current_branch)
   if [[ $current_branch != $1 ]]; then
     echo "Failed to switch branch to $1"
     exit 1
   fi
 }
 
+create_upstream_if_not_already_there() {
+  git log origin/$current_branch >/dev/null 2>&1
+  if [[ $? == 128 ]]; then
+    git push -u origin $current_branch >/dev/null 2>&1
+    if [[ $? == 0 ]]; then
+      echo "Created upstream origin/$current_branch"
+    else
+      echo "Failed to create upstream origin/$current_branch"
+    fi
+  fi
+}
+
 branch="$1"
 remote="$2"
-if [[ $branch == "" ]]; then
-  prompt_branch
-fi
+previous_branch=$(get_current_branch)
+prompt_branch
 
 detect_changes
 reset_local
 switch_branch $branch
 detect_ahead
 reset $branch
+create_upstream_if_not_already_there
