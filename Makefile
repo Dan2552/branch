@@ -30,7 +30,7 @@ $(LIBS):
 		Frameworks/$@/*.swift
 
 cart:
-	carthage update
+	carthage update --no-build
 	mkdir Frameworks
 	mkdir Frameworks/PySwiftyRegex
 	mkdir Frameworks/Swiftline
