@@ -24,3 +24,12 @@ if options.isBranchSupplied {
   printCurrentBranch()
   printGitStatus(true)
 }
+
+if options.isTestRebase {
+  let rebase = Rebase(
+    newBase: Commit.fromIdentifier("develop"),
+    oldHead: Commit.getCurrentHead()
+  )
+
+  rebase.apply()
+}

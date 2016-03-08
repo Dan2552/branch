@@ -1,34 +1,46 @@
+import Foundation
 import Swiftline
 
 struct Commit {
-  let message: String
-  let sha: String
+  var message: String
+  var sha: String
 
-  static func getCurrentHead() -> Commit {
-    return Commit.fromSha(nameFor("HEAD"))
+  init(message: String, sha: String) {
+    self.message = message.clearQuotes()
+    self.sha = sha.clearQuotes()
   }
 
-  static func fromSha(sha: String) -> Commit {
-    let message = runCommand("git log -1 \(sha) --format=\"%s\"").stdout
+  static func getCurrentHead() -> Commit {
+    return Commit.fromIdentifier("HEAD")
+  }
+
+  static func fromIdentifier(identifier: String) -> Commit {
     return Commit(
-      message: message,
-      sha: sha
+      message: messageFor(identifier),
+      sha: shaFor(identifier)
     )
   }
 
   func commitsLeadingTo(commit: Commit) -> [Commit] {
-    let shas = runCommand("git rev-list \(sha)..\(commit.sha) --reverse")
+    let run = runCommand("git rev-list \(sha)..\(commit.sha) --reverse").stdout
     var commits = [Commit]()
-
+    let shas = run.componentsSeparatedByString("\n")
+    for sha in shas {
+      commits.append(Commit.fromIdentifier(sha))
+    }
     return commits
   }
 
   func mostRecentCommonAncestorTo(commit: Commit) -> Commit {
     let mergeBase = runCommand("git merge-base \(sha) \(commit.sha)").stdout
-    return Commit.fromSha(mergeBase)
+    return Commit.fromIdentifier(mergeBase)
   }
 
-  private static func nameFor(sha: String) -> String {
-    return runCommand("git log -1 \(sha) --format=\"%H\"").stdout
+  private static func shaFor(identifier: String) -> String {
+    return runCommand("git log -1 \(identifier) --format=\"%H\"").stdout
+  }
+
+  private static func messageFor(identifier: String) -> String {
+    return runCommand("git log -1 \(identifier) --format=\"%s\"").stdout
   }
 }
