@@ -6,6 +6,7 @@ class Options {
   var suppliedBranch: String?
   var isBranchSupplied: Bool { get { return suppliedBranch != nil } }
   var isHelp = false
+  var isTestRebase = false
 
   func loadOptionsFrom(arguments: [String]) {
     if arguments.contains("help") || arguments.contains("--help") {
@@ -18,6 +19,10 @@ class Options {
 
     if arguments.contains("-v") || arguments.contains("--version") {
       isShowVersion = true
+    }
+
+    if arguments.contains("--test-rebase") {
+      isTestRebase = true
     }
 
     if arguments.count > 1 {

@@ -15,6 +15,13 @@ extension String {
 
     return results
   }
+
+  func clearQuotes() -> String {
+    return stringByReplacingOccurrencesOfString("\"",
+      withString: "",
+      options: NSStringCompareOptions.LiteralSearch,
+      range: nil)
+  }
 }
 
 extension NSString {
