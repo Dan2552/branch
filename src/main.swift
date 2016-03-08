@@ -1,18 +1,26 @@
 import Foundation
 
-addAll()
+let options = Options.sharedInstance
+options.loadOptionsFrom(Process.arguments)
 
-if Process.arguments.count < 2 {
-  printCurrentBranch()
-  print("")
-  printGitStatus()
-  exit(0)
-}
-
-let argument = Process.arguments[1]
-if argument == "--version" {
+if options.isShowVersion {
   print("branch 0.2.0")
   exit(0)
 }
 
-setCurrentBranch(Branch(name: argument))
+if options.isHelp {
+  print("usage: branch BRANCH-NAME [ARGS]")
+  print("")
+  print("--version | -v \t\tShows the current version")
+  print("--help | help \t\tShows this help")
+  exit(0)
+}
+
+addAll()
+
+if options.isBranchSupplied {
+  setCurrentBranch(Branch(name: options.suppliedBranch!))
+} else {
+  printCurrentBranch()
+  printGitStatus(true)
+}

@@ -10,7 +10,7 @@ struct Branch {
 }
 
 func getCurrentBranch() -> Branch? {
-  let result = run("git symbolic-ref HEAD")
+  let result = runCommand("git symbolic-ref HEAD")
   let matches = result.stdout.matchesForRegex("heads\\/(.*)")
   if matches.count == 0 {
     return nil
@@ -39,14 +39,15 @@ func detectChanges() {
 }
 
 func resetLocal() {
-  run("git reset --hard")
+  runCommand("git reset --hard")
 }
 
 func switchBranch(branch: Branch) {
-  let checkout = run("git checkout \(branch.name)")
-  if checkout.exitStatus != 0 {
-    run("git checkout -b \(branch.name)")
-    run("git branch --set-upstream-to=origin/\(branch.name)")
+  let checkout = runCommand("git checkout \(branch.name)")
+
+  if getCurrentBranch()!.name != branch.name {
+    runCommand("git checkout -b \(branch.name)")
+    runCommand("git branch --set-upstream-to=origin/\(branch.name)")
   }
 
   if getCurrentBranch()!.name != branch.name {
@@ -89,12 +90,12 @@ func branchesDiverged() {
 
 func resetToOrigin() {
   let origin = getCurrentBranch()!.origin()
-  let reset = run("git reset --hard \(origin)")
+  let reset = runCommand("git reset --hard \(origin)")
 
   if reset.exitStatus == 0 {
-    print("Using remote branch")
+    print("Using remote branch".f.Green)
   } else {
-    print("Using local branch (no origin branch found)")
+    print("Using local branch (no origin branch found)".f.Green)
   }
 }
 
@@ -110,12 +111,14 @@ func uncommitedChanges() {
 }
 
 func gitStatus() -> NSString {
-  return run("git status").stdout
+  return runCommand("git status").stdout
 }
 
-func printGitStatus() {
+func printGitStatus(preceedingNewline: Bool = false) {
   let diff = gitStatus().matchesForRegex("\t([a-z ]*:.*)")
-
+  if diff.count > 0 && preceedingNewline {
+    print("")
+  }
   for line in diff {
     print("\t\(line)".f.Green)
   }
@@ -140,11 +143,11 @@ func promptKeepLocal() {
 }
 
 func addAll() {
-  run("git add . -A")
+  runCommand("git add . -A")
 }
 
 func fetch() {
-  let fetch = run("git fetch")
+  let fetch = runCommand("git fetch")
   let error = fetch.stderr
   if (error as NSString).containsString("No remote repository specified") {
     print("\n⚠️  No remote repository is setup\n".f.Yellow)

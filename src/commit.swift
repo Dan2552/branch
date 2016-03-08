@@ -9,7 +9,7 @@ struct Commit {
   }
 
   static func fromSha(sha: String) -> Commit {
-    let message = run("git log -1 \(sha) --format=\"%s\"").stdout
+    let message = runCommand("git log -1 \(sha) --format=\"%s\"").stdout
     return Commit(
       message: message,
       sha: sha
@@ -17,18 +17,18 @@ struct Commit {
   }
 
   func commitsLeadingTo(commit: Commit) -> [Commit] {
-    let shas = run("git rev-list \(sha)..\(commit.sha) --reverse")
+    let shas = runCommand("git rev-list \(sha)..\(commit.sha) --reverse")
     var commits = [Commit]()
 
     return commits
   }
 
   func mostRecentCommonAncestorTo(commit: Commit) -> Commit {
-    let mergeBase = run("git merge-base \(sha) \(commit.sha)").stdout
+    let mergeBase = runCommand("git merge-base \(sha) \(commit.sha)").stdout
     return Commit.fromSha(mergeBase)
   }
 
   private static func nameFor(sha: String) -> String {
-    return run("git log -1 \(sha) --format=\"%H\"").stdout
+    return runCommand("git log -1 \(sha) --format=\"%H\"").stdout
   }
 }
