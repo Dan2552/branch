@@ -8,10 +8,17 @@ if options.isShowVersion {
   exit(0)
 }
 
+if options.isShowList {
+  printRecentBranches()
+  exit(0)
+}
+
 if options.isHelp {
   print("usage: branch BRANCH-NAME [ARGS]")
   print("")
   print("--version | -v \t\tShows the current version")
+  print("--verbose \t\tPrints all the git commands as they run")
+  print("--list | -l \t\tPrints the most recently updated branches")
   print("--help | help \t\tShows this help")
   exit(0)
 }

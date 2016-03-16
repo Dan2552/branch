@@ -5,7 +5,7 @@ Branch aims to simplify a developer's daily workflow of Git. It is in no means s
 
 ![Screenshot](https://raw.githubusercontent.com/Dan2552/branch/master/screenshot.png "Screenshot")
 
-Usage
+Basic usage
 =====
 
 - Use `branch` as an alternative for `git status`
@@ -17,6 +17,7 @@ Features
 - When changing branch
   - Warns if you have local changes and prompts on whether to continue
   - Warns if the remote branch has diverged and prompts on whether to continue and if you want to keep your local branch or to reset with the remote
+- List most recent branches with `--list` argument
 
 Future plans
 ============

@@ -36,6 +36,16 @@ struct Commit {
     return Commit.fromIdentifier(mergeBase)
   }
 
+  func printableFormat(format: String) -> String {
+    let command = runCommand("git", args: [
+      "log",
+      "-n1",
+      sha,
+      "--format=\(format)"
+    ])
+    return command.stdout
+  }
+
   private static func shaFor(identifier: String) -> String {
     return runCommand("git log -1 \(identifier) --format=\"%H\"").stdout
   }

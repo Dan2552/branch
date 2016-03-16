@@ -43,7 +43,7 @@ func resetLocal() {
 }
 
 func switchBranch(branch: Branch) {
-  let checkout = runCommand("git checkout \(branch.name)")
+  runCommand("git checkout \(branch.name)")
 
   if getCurrentBranch()!.name != branch.name {
     runCommand("git checkout -b \(branch.name)")
@@ -102,6 +102,25 @@ func resetToOrigin() {
 func printCurrentBranch() {
   let branchName = getCurrentBranch()?.name ?? "no branch"
   print("On branch \(branchName.s.Bold)")
+}
+
+func printRecentBranches() {
+  let command = runCommand("git for-each-ref --sort=-committerdate --format=\"%(refname)\" --count=30 refs/heads/ refs/remotes")
+  let references = command.stdout.componentsSeparatedByString("\n")
+
+  let commits: [Commit] = references.map {
+    Commit(message: "", sha: $0.clearQuotes())
+  }
+
+  let strings = commits.map {
+    $0.printableFormat("%Cgreen%cr%Creset %C(yellow)%d%Creset %C(bold blue)<%an>%Creset%n")
+  }
+
+  var lastStr = ""
+  for str in strings {
+    if str != lastStr { print(str) } // avoid dups
+    lastStr = str
+  }
 }
 
 func uncommitedChanges() {
