@@ -8,6 +8,7 @@ SOURCES =$(shell ls src/*.swift)
 
 build: clean cart $(LIBS)
 	xcrun -sdk macosx swiftc $(SOURCES) \
+		-target x86_64-apple-macosx10.10 \
 		-o $(BUILD_PATH)/$(APP_NAME) \
 		-I $(LIB_BUILD_PATH) \
 		-L $(LIB_BUILD_PATH) \
