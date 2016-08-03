@@ -4,7 +4,7 @@ let options = Options.sharedInstance
 options.loadOptionsFrom(Process.arguments)
 
 if options.isShowVersion {
-  print("branch 0.2.0")
+  print("branch 0.2.1")
   exit(0)
 }
 
