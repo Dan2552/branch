@@ -47,8 +47,9 @@ func switchBranch(branch: Branch) {
 
   if getCurrentBranch()!.name != branch.name {
     runCommand("git checkout -b \(branch.name)")
-    runCommand("git branch --set-upstream-to=origin/\(branch.name)")
   }
+
+  runCommand("git branch --set-upstream-to=origin/\(branch.name)")
 
   if getCurrentBranch()!.name != branch.name {
     print("🤔  Failed to switch branch".f.Red)
