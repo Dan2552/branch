@@ -171,6 +171,7 @@ func promptKeepLocal() {
 }
 
 func addAll() {
+  runCommand("git reset --mixed")
   runCommand("git add . -A")
 }
 
