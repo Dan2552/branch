@@ -8,6 +8,8 @@ class Options {
   var isHelp = false
   var isTestRebase = false
   var isShowList = false
+  var preferLocal = false
+  var preferRemote = false
 
   func loadOptionsFrom(arguments: [String]) {
     if arguments.contains("help") || arguments.contains("--help") {
@@ -28,6 +30,14 @@ class Options {
 
     if arguments.contains("--list") || arguments.contains("-l") {
       isShowList = true
+    }
+
+    if arguments.contains("--prefer=local") {
+      preferLocal = true
+    }
+
+    if arguments.contains("--prefer=remote") {
+      preferRemote = true
     }
 
     if arguments.count > 1 {

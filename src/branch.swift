@@ -151,11 +151,19 @@ func promptContinueAnyway() {
 }
 
 func promptKeepLocal() {
-  let choice = choose("Keep remote or local copy?\n>", type: String.self) { settings in
-    settings.addChoice("remote") { "remote" }
-    settings.addChoice("local") { "local" }
-  }
+  let choice: String
 
+  if options.preferLocal {
+    choice = "local"
+  } else if options.preferRemote {
+    choice = "remote"
+  } else {
+    choice = choose("Keep remote or local copy?\n>", type: String.self) { settings in
+      settings.addChoice("remote") { "remote" }
+      settings.addChoice("local") { "local" }
+    }
+  }
+  
   if choice != "remote" {
     print("Using local branch (user specified)")
     exit(0)

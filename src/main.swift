@@ -19,6 +19,7 @@ if options.isHelp {
   print("--version | -v \t\tShows the current version")
   print("--verbose \t\tPrints all the git commands as they run")
   print("--list | -l \t\tPrints the most recently updated branches")
+  print("--prefer=PREFERENCE \tWhere PREFERENCE is local or remote, will use the set preference rather than ask")
   print("--help | help \t\tShows this help")
   exit(0)
 }
