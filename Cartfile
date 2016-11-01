@@ -1,2 +1,2 @@
-github "swiftline/swiftline"
-github "cezheng/PySwiftyRegex" ~> 0.2.0
+github "swiftline/swiftline" "master"
+github "cezheng/PySwiftyRegex"

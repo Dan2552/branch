@@ -17,14 +17,14 @@ class Rebase {
     self.newBase = newBase
     self.oldHead = oldHead
 
-    commonAncestor = oldHead.mostRecentCommonAncestorTo(newBase)
-    commits = commonAncestor.commitsLeadingTo(oldHead)
-    commitsApplyingOn = commonAncestor.commitsLeadingTo(newBase)
+    commonAncestor = oldHead.mostRecentCommonAncestor(toCommit: newBase)
+    commits = commonAncestor.commitsLeading(toCommit: oldHead)
+    commitsApplyingOn = commonAncestor.commitsLeading(toCommit: newBase)
   }
 
   func apply() {
     print("↩ Rewinding...")
-    runCommand("git reset --hard \(commonAncestor.sha)")
+    _ = runCommand("git reset --hard \(commonAncestor.sha)")
     applyNextCommit()
   }
 
@@ -42,7 +42,7 @@ class Rebase {
     printProgress()
 
     let commit = commits[progress]
-    runCommand("git cherry-pick \(commit.sha)")
+    _ = runCommand("git cherry-pick \(commit.sha)")
 
     progress += 1
     applyNextCommit()

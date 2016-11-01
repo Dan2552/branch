@@ -11,7 +11,7 @@ struct Branch {
 
 func getCurrentBranch() -> Branch? {
   let result = runCommand("git symbolic-ref HEAD")
-  let matches = result.stdout.matchesForRegex("heads\\/(.*)")
+  let matches = result.stdout.matches(forRegex: "heads\\/(.*)")
   if matches.count == 0 {
     return nil
   } else {
@@ -19,7 +19,7 @@ func getCurrentBranch() -> Branch? {
   }
 }
 
-func setCurrentBranch(branch: Branch) {
+func setCurrentBranch(_ branch: Branch) {
   print("Switching to branch \(branch.name.s.Bold)...")
   fetch()
   detectChanges()
@@ -31,25 +31,25 @@ func setCurrentBranch(branch: Branch) {
 
 func detectChanges() {
   let status = gitStatus()
-  if status.containsString("to be committed") ||
-      status.containsString("for commit:") ||
-      status.containsString("Untracked files:") {
+  if status.contains("to be committed") ||
+      status.contains("for commit:") ||
+      status.contains("Untracked files:") {
     uncommitedChanges()
   }
 }
 
 func resetLocal() {
-  runCommand("git reset --hard")
+  _ = runCommand("git reset --hard")
 }
 
-func switchBranch(branch: Branch) {
-  runCommand("git checkout \(branch.name)")
+func switchBranch(_ branch: Branch) {
+  _ = runCommand("git checkout \(branch.name)")
 
   if getCurrentBranch()!.name != branch.name {
-    runCommand("git checkout -b \(branch.name)")
+    _ = runCommand("git checkout -b \(branch.name)")
   }
 
-  runCommand("git branch --set-upstream-to=origin/\(branch.name)")
+  _ = runCommand("git branch --set-upstream-to=origin/\(branch.name)")
 
   if getCurrentBranch()!.name != branch.name {
     print("🤔  Failed to switch branch".f.Red)
@@ -59,9 +59,9 @@ func switchBranch(branch: Branch) {
 
 func detectAhead() {
   let status = gitStatus()
-  if status.containsString("can be fast-forwarded.") ||
-      status.containsString("is ahead of 'origin") ||
-      status.containsString(" have diverged") {
+  if status.contains("can be fast-forwarded.") ||
+      status.contains("is ahead of 'origin") ||
+      status.contains(" have diverged") {
     branchesDiverged()
   }
 }
@@ -83,7 +83,7 @@ func detectAhead() {
 // nothing to commit, working directory clean
 func branchesDiverged() {
   print("\n😱  You appear to have a diverged branch:".f.Red)
-  let matches = gitStatus().matchesForRegex("(Your branch .*\\s*.*)\\s*\\(")
+  let matches = gitStatus().matches(forRegex: "(Your branch .*\\s*.*)\\s*\\(")
   for match in matches { print(match) }
 
   promptKeepLocal()
@@ -107,7 +107,7 @@ func printCurrentBranch() {
 
 func printRecentBranches() {
   let command = runCommand("git for-each-ref --sort=-committerdate --format=\"%(refname)\" --count=30 refs/heads/ refs/remotes")
-  let references = command.stdout.componentsSeparatedByString("\n")
+  let references = command.stdout.components(separatedBy: "\n")
 
   let commits: [Commit] = references.map {
     Commit(message: "", sha: $0.clearQuotes())
@@ -130,12 +130,12 @@ func uncommitedChanges() {
   promptContinueAnyway()
 }
 
-func gitStatus() -> NSString {
+func gitStatus() -> String {
   return runCommand("git status").stdout
 }
 
 func printGitStatus(preceedingNewline: Bool = false) {
-  let diff = gitStatus().matchesForRegex("\t([a-z ]*:.*)")
+  let diff = gitStatus().matches(forRegex: "\t([a-z ]*:.*)")
   if diff.count > 0 && preceedingNewline {
     print("")
   }
@@ -163,7 +163,7 @@ func promptKeepLocal() {
       settings.addChoice("local") { "local" }
     }
   }
-  
+
   if choice != "remote" {
     print("Using local branch (user specified)")
     exit(0)
@@ -171,14 +171,14 @@ func promptKeepLocal() {
 }
 
 func addAll() {
-  runCommand("git reset --mixed")
-  runCommand("git add . -A")
+  _ = runCommand("git reset --mixed")
+  _ = runCommand("git add . -A")
 }
 
 func fetch() {
   let fetch = runCommand("git fetch")
   let error = fetch.stderr
-  if (error as NSString).containsString("No remote repository specified") {
+  if (error as NSString).contains("No remote repository specified") {
     print("\n⚠️  No remote repository is setup\n".f.Yellow)
     return
   }

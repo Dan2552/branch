@@ -1,7 +1,7 @@
 import Foundation
 
 let options = Options.sharedInstance
-options.loadOptionsFrom(Process.arguments)
+options.loadOptions(fromArguments: CommandLine.arguments)
 
 if options.isShowVersion {
   print("branch 0.3.0")
@@ -30,12 +30,12 @@ if options.isBranchSupplied {
   setCurrentBranch(Branch(name: options.suppliedBranch!))
 } else {
   printCurrentBranch()
-  printGitStatus(true)
+  printGitStatus(preceedingNewline: true)
 }
 
 if options.isTestRebase {
   let rebase = Rebase(
-    newBase: Commit.fromIdentifier("develop"),
+    newBase: Commit.from(identifier: "develop"),
     oldHead: Commit.getCurrentHead()
   )
 

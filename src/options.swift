@@ -11,7 +11,7 @@ class Options {
   var preferLocal = false
   var preferRemote = false
 
-  func loadOptionsFrom(arguments: [String]) {
+  func loadOptions(fromArguments arguments: [String]) {
     if arguments.contains("help") || arguments.contains("--help") {
       isHelp = true
     }

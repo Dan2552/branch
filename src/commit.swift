@@ -11,32 +11,32 @@ struct Commit {
   }
 
   static func getCurrentHead() -> Commit {
-    return Commit.fromIdentifier("HEAD")
+    return Commit.from(identifier: "HEAD")
   }
 
-  static func fromIdentifier(identifier: String) -> Commit {
+  static func from(identifier: String) -> Commit {
     return Commit(
-      message: messageFor(identifier),
-      sha: shaFor(identifier)
+      message: message(forIdentifier: identifier),
+      sha: sha(forIdentifier: identifier)
     )
   }
 
-  func commitsLeadingTo(commit: Commit) -> [Commit] {
+  func commitsLeading(toCommit commit: Commit) -> [Commit] {
     let run = runCommand("git rev-list \(sha)..\(commit.sha) --reverse").stdout
     var commits = [Commit]()
-    let shas = run.componentsSeparatedByString("\n")
+    let shas = run.components(separatedBy: "\n")
     for sha in shas {
-      commits.append(Commit.fromIdentifier(sha))
+      commits.append(Commit.from(identifier: sha))
     }
     return commits
   }
 
-  func mostRecentCommonAncestorTo(commit: Commit) -> Commit {
+  func mostRecentCommonAncestor(toCommit commit: Commit) -> Commit {
     let mergeBase = runCommand("git merge-base \(sha) \(commit.sha)").stdout
-    return Commit.fromIdentifier(mergeBase)
+    return Commit.from(identifier: mergeBase)
   }
 
-  func printableFormat(format: String) -> String {
+  func printableFormat(_ format: String) -> String {
     let command = runCommand("git", args: [
       "log",
       "-n1",
@@ -46,11 +46,11 @@ struct Commit {
     return command.stdout
   }
 
-  private static func shaFor(identifier: String) -> String {
+  private static func sha(forIdentifier identifier: String) -> String {
     return runCommand("git log -1 \(identifier) --format=\"%H\"").stdout
   }
 
-  private static func messageFor(identifier: String) -> String {
+  private static func message(forIdentifier identifier: String) -> String {
     return runCommand("git log -1 \(identifier) --format=\"%s\"").stdout
   }
 }
