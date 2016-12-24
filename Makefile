@@ -1,5 +1,6 @@
+PWD=$(shell pwd)
 APP_NAME=branch
-BUILD_PATH=$(shell pwd)/build
+BUILD_PATH=$(PWD)/build
 SOURCES=$(shell ls src/*.swift)
 
 build: prepare cart compile
@@ -21,7 +22,7 @@ compile:
 		-sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk \
 		-o $(BUILD_PATH)/$(APP_NAME) \
 		-target x86_64-apple-macosx10.12 \
-		-F /Users/dan2552/projects/branch/Carthage/Build/Mac \
+		-F $(PWD)/Carthage/Build/Mac \
 		-emit-executable \
 		-Xlinker -rpath -Xlinker @executable_path/ \
 		$(SOURCES)
