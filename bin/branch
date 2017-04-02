@@ -1,2 +1,6 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env bash
 
+current_dir=$( pwd )
+script_dir=$( cd "$( dirname "$0" )" && pwd )
+
+BUNDLE_GEMFILE=$script_dir/../Gemfile bundle exec ruby $script_dir/../src/load.rb $*

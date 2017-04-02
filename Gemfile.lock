@@ -1,0 +1,27 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    coderay (1.1.1)
+    formatador (0.2.5)
+    inquirer (0.2.1)
+      term-ansicolor (>= 1.2.2)
+    method_source (0.8.2)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    slop (3.6.0)
+    term-ansicolor (1.5.0)
+      tins (~> 1.0)
+    tins (1.13.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  formatador
+  inquirer
+  pry
+
+BUNDLED WITH
+   1.13.6
