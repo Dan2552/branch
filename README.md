@@ -8,6 +8,9 @@ The assumptions `branch` makes are:
 
 ![Screenshot](screenshot.png)
 
+## Installation
+`gem install branch_cli`
+
 ## Basic usage
 
 - Use `branch` as an alternative for `git status`
