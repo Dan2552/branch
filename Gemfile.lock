@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    branch_cli (0.6.0)
-      binding_of_caller
-      formatador
-      inquirer
+    branch_cli (0.7.0)
+      binding_of_caller (~> 0.7.2)
+      formatador (~> 0.2.5)
+      inquirer (~> 0.2.1)
 
 GEM
   remote: https://rubygems.org/
@@ -22,19 +22,19 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    rspec (3.5.0)
-      rspec-core (~> 3.5.0)
-      rspec-expectations (~> 3.5.0)
-      rspec-mocks (~> 3.5.0)
-    rspec-core (3.5.4)
-      rspec-support (~> 3.5.0)
-    rspec-expectations (3.5.0)
+    rspec (3.6.0)
+      rspec-core (~> 3.6.0)
+      rspec-expectations (~> 3.6.0)
+      rspec-mocks (~> 3.6.0)
+    rspec-core (3.6.0)
+      rspec-support (~> 3.6.0)
+    rspec-expectations (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.5.0)
-    rspec-mocks (3.5.0)
+      rspec-support (~> 3.6.0)
+    rspec-mocks (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.5.0)
-    rspec-support (3.5.0)
+      rspec-support (~> 3.6.0)
+    rspec-support (3.6.0)
     slop (3.6.0)
     term-ansicolor (1.6.0)
       tins (~> 1.0)
@@ -45,8 +45,8 @@ PLATFORMS
 
 DEPENDENCIES
   branch_cli!
-  pry (> 0)
-  rspec (~> 3.5.0)
+  pry (~> 0.10.4)
+  rspec (~> 3.6)
 
 BUNDLED WITH
    1.14.6

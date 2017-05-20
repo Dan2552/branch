@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |gem|
   gem.name          = 'branch_cli'
-  gem.version       = '0.6.0'
+  gem.version       = '0.7.0'
   gem.authors       = ['Daniel Inkpen']
   gem.email         = ['dan2552@gmail.com']
   gem.description   = %q{Faster, safer git branching.}
@@ -11,12 +11,12 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'https://github.com/Dan2552/branch'
   gem.license       = 'MIT'
 
-  gem.add_dependency "formatador"
-  gem.add_dependency "inquirer"
-  gem.add_dependency "binding_of_caller"
+  gem.add_dependency "formatador", '~> 0.2.5'
+  gem.add_dependency "inquirer", '~> 0.2.1'
+  gem.add_dependency "binding_of_caller", '~> 0.7.2'
 
-  gem.add_development_dependency 'rspec', '~> 3.5.0'
-  gem.add_development_dependency 'pry', '> 0'
+  gem.add_development_dependency 'rspec', '~> 3.6'
+  gem.add_development_dependency 'pry', '~> 0.10.4'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
