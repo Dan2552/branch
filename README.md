@@ -1,4 +1,4 @@
-# Branch
+# branch cli
 
 `branch` simplifies the average workflow of Git. By working on simple assumptions of workflow, it's easier, more memorable, quicker and safer to use.
 
@@ -21,9 +21,9 @@ The assumptions `branch` makes are:
   - Warns if the remote branch has diverged and prompts on whether you want to keep your local branch or to reset with the remote
 - Formatted list of most recent branches with `--list` argument
 
-## Future plans
+## Future ideas/plans
 
 - Recording base branch when creating a new one
 - Suggestion to rebase if it detects that you should (i.e. automatic `git pull --rebase` and `git rebase origin/base-branch`)
 - Nicer flow for rebasing (visual representation of progress)
-- clear indication of files in conflict (as well as automatic indication of when you have resolved them!)
+- clear indication of files in conflict (as well as automatic indication of when you have resolved them)

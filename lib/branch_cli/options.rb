@@ -3,6 +3,10 @@ class Options < Swifty
     @sharedInstance ||= Options.new
   end
 
+  def self.reset
+    @sharedInstance = nil
+  end
+
   var isVerbose = false
   var isShowVersion = false
   var suppliedBranch = nil

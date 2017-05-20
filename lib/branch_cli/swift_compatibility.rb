@@ -90,4 +90,8 @@ class String
   def Red
     "[red]#{self}[/]"
   end
+
+  def Yellow
+    "[yellow]#{self}[/]"
+  end
 end

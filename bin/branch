@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ruby
 
-current_dir=$( pwd )
-script_dir=$( cd "$( dirname "$0" )" && pwd )
-
-BUNDLE_GEMFILE=$script_dir/../Gemfile bundle exec ruby $script_dir/../src/load.rb $*
+require 'branch_cli'
+main(ARGV)

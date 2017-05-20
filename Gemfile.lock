@@ -1,7 +1,15 @@
+PATH
+  remote: .
+  specs:
+    branch_cli (0.6.0)
+      formatador
+      inquirer
+
 GEM
   remote: https://rubygems.org/
   specs:
     coderay (1.1.1)
+    diff-lcs (1.3)
     formatador (0.2.5)
     inquirer (0.2.1)
       term-ansicolor (>= 1.2.2)
@@ -10,8 +18,21 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+    rspec-core (3.5.4)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
     slop (3.6.0)
-    term-ansicolor (1.5.0)
+    term-ansicolor (1.6.0)
       tins (~> 1.0)
     tins (1.13.2)
 
@@ -19,9 +40,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  formatador
-  inquirer
-  pry
+  branch_cli!
+  pry (> 0)
+  rspec (~> 3.5.0)
 
 BUNDLED WITH
-   1.13.6
+   1.14.6
