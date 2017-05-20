@@ -17,17 +17,23 @@ RSpec.describe "switching branch" do
     end
   end
 
+  context "when the working copy has changes" do
+    before { touch("changes") }
+
+    it "asks whether to discard changes" do
+      expect(Ask).to receive(:list)
+                 .with("Continue anyway? Changes will be lost", ["Stop", "Continue"])
+      subject
+    end
+  end
+
   context "when the branch exists on remote" do
     let(:args) { %w{spec} }
     before { clone_remote_repo }
 
-    it "defaults to the remote branch" do
-      expect_output /Using remote branch/
-    end
-
     context "when the local branch matches the remote" do
       let(:args) { %w{master} }
-      before { execute %w{spec} }
+      before { execute %w{spec --prefer=remote} }
 
       it "prints that it's using the remote branch" do
         expect_output /Using remote branch/
@@ -44,16 +50,6 @@ RSpec.describe "switching branch" do
       it "asks whether to use the remote or local" do
         expect(Ask).to receive(:list)
                    .with("Keep remote or local copy?", ["Remote", "Local"])
-        subject
-      end
-    end
-
-    context "when the working copy has changes" do
-      before { touch("changes") }
-
-      it "asks whether to discard changes" do
-        expect(Ask).to receive(:list)
-                   .with("Continue anyway? Changes will be lost", ["Stop", "Continue"])
         subject
       end
     end
