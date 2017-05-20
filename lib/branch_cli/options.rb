@@ -1,4 +1,4 @@
-class Options < Swifty
+class Options < SwiftObject
   def self.sharedInstance
     @sharedInstance ||= Options.new
   end
@@ -15,8 +15,6 @@ class Options < Swifty
   var isShowList = false
   var preferLocal = false
   var preferRemote = false
-
-  swift self, binding
 
   def isBranchSupplied
     return suppliedBranch != nil

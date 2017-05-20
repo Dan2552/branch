@@ -1,8 +1,5 @@
-
-class Branch < Swifty
+class Branch < SwiftStruct
   let name = nil
-
-  swift self, binding
 
   def origin
     return "origin/#{name}"

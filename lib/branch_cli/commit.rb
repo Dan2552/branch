@@ -1,9 +1,6 @@
-
-class Commit < Swifty
+class Commit < SwiftStruct
   var message = nil
   var sha = nil
-
-  swift self, binding
 
   def initialize(message: String, sha: String)
     self.message = message.clearQuotes

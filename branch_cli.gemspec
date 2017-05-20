@@ -13,6 +13,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "formatador"
   gem.add_dependency "inquirer"
+  gem.add_dependency "binding_of_caller"
 
   gem.add_development_dependency 'rspec', '~> 3.5.0'
   gem.add_development_dependency 'pry', '> 0'

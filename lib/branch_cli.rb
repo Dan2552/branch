@@ -12,6 +12,7 @@ $LOAD_PATH.unshift path
 
 require 'formatador'
 require 'inquirer'
+require 'binding_of_caller'
 
 require 'swift_compatibility'
 

@@ -1,9 +1,7 @@
-class RunResult < Swifty
+class RunResult < SwiftStruct
   let stdout = nil
   let stderr = nil
   let exitStatus = nil
-
-  swift self, binding
 end
 
 def runCommand(command, args: [])

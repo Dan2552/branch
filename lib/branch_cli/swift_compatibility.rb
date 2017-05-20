@@ -1,40 +1,28 @@
 class Object
-  def self.let(*args)
-  end
-
-  def self.var(*args)
-  end
-
   def let(*args)
   end
 
   def var(*args)
   end
-
-  def agree(message)
-    puts ""
-    idx = Ask.list message, [
-      "Continue",
-      "Do not continue",
-    ]
-    binding.pry
-    # puts ""
-    # cli = HighLine.new
-    # cli.choose do |menu|
-    #   menu.prompt = message
-    #   menu.choice(:yes, :y) { return true }
-    #   menu.choice(:no, :n) { return false }
-    # end
-  end
 end
 
-class Swifty
-  def self.swift(s, b)
-    b.local_variables.each do |v|
-      s.send(:attr_reader, v)
-      s.send(:attr_writer, v)
+class SwiftObject
+  def self.let(*args)
+    bind = binding.of_caller(1)
+    bind.local_variables.each do |v|
+      attr_reader(v)
 
-      variable_defaults[v] = b.local_variable_get(v)
+      variable_defaults[v] = bind.local_variable_get(v)
+    end
+  end
+
+  def self.var(*args)
+    bind = binding.of_caller(1)
+    bind.local_variables.each do |v|
+      attr_reader(v)
+      attr_writer(v)
+
+      variable_defaults[v] = bind.local_variable_get(v)
     end
   end
 
@@ -42,9 +30,22 @@ class Swifty
     @variable_defaults ||= {}
   end
 
+  def initialize
+    params = self.class.variable_defaults
+
+    params.each do |key, value|
+      instance_variable_set("@#{key}", value)
+    end
+  end
+end
+
+class SwiftStruct < SwiftObject
   def initialize(params = {})
     params = self.class.variable_defaults.merge!(params)
-    params.each { |key, value| send "#{key}=", value }
+
+    params.each do |key, value|
+      instance_variable_set("@#{key}", value)
+    end
   end
 end
 
@@ -65,33 +66,5 @@ class String
 
   def components(separatedBy:)
     split(separatedBy)
-  end
-
-  def s
-    self
-  end
-
-  def Bold
-    "[bold]#{self}[/]"
-  end
-
-  def f
-    self
-  end
-
-  def Green
-    "[green]#{self}[/]"
-  end
-
-  def Blue
-    "[blue]#{self}[/]"
-  end
-
-  def Red
-    "[red]#{self}[/]"
-  end
-
-  def Yellow
-    "[yellow]#{self}[/]"
   end
 end
