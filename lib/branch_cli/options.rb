@@ -20,7 +20,7 @@ class Options < SwiftObject
     return suppliedBranch != nil
   end
 
-  def loadOptions(arguments:)
+  def loadOptions(arguments: nil)
     if arguments.contains("help") || arguments.contains("--help")
       self.isHelp = true
     end

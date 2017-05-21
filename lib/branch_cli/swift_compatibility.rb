@@ -9,20 +9,20 @@ end
 class SwiftObject
   def self.let(*args)
     bind = binding.of_caller(1)
-    bind.local_variables.each do |v|
+    bind.eval("local_variables").each do |v|
       attr_reader(v)
 
-      variable_defaults[v] = bind.local_variable_get(v)
+      variable_defaults[v] = bind.eval("#{v}")
     end
   end
 
   def self.var(*args)
     bind = binding.of_caller(1)
-    bind.local_variables.each do |v|
+    bind.eval("local_variables").each do |v|
       attr_reader(v)
       attr_writer(v)
 
-      variable_defaults[v] = bind.local_variable_get(v)
+      variable_defaults[v] = bind.eval("#{v}")
     end
   end
 
@@ -64,7 +64,7 @@ class String
     start_with?(str)
   end
 
-  def components(separatedBy:)
+  def components(separatedBy: ",")
     split(separatedBy)
   end
 end

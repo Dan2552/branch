@@ -97,7 +97,7 @@ def resetToOrigin
 end
 
 def printCurrentBranch
-  let branchName = getCurrentBranch&.name || "no branch"
+  let branchName = (getCurrentBranch && getCurrentBranch.name) || "no branch"
   prettyPrint("On branch #{branchName.s.Bold}")
 end
 

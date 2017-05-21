@@ -1,7 +1,10 @@
 class String
-  def matches(forRegex:)
+  def matches(forRegex: nil)
     lines = split("\n")
-    lines.map { |l| l.match(forRegex)&.captures }.flatten.compact
+    lines.map do |l|
+      match = l.match(forRegex)
+      match && match.captures
+    end.flatten.compact
   end
 
   def clearQuotes

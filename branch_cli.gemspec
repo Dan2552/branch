@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |gem|
   gem.name          = 'branch_cli'
-  gem.version       = '0.7.0'
+  gem.version       = '0.7.1'
   gem.authors       = ['Daniel Inkpen']
   gem.email         = ['dan2552@gmail.com']
   gem.description   = %q{Faster, safer git branching.}
