@@ -19,7 +19,13 @@ RSpec.describe "status" do
     end
 
     it "prints out the files" do
-      expect_output /awholenewfile/
+      expect_output /1 uncommited changed files.*awholenewfile/m
+    end
+  end
+
+  context "there are no changed files" do
+    it "does not print uncommited changed files" do
+      expect_to_not_output /uncommited changed files/
     end
   end
 

@@ -159,9 +159,11 @@ end
 def print_uncommited_files
   let diff = Git.status.matches(forRegex: "\t([a-z ]*:.*)")
 
-  prettyPrint("#{diff.count} uncommited changed files")
-  diff.each do |line|
-    prettyPrint("  #{line}".f.Green)
+  if diff.count > 0
+    prettyPrint("#{diff.count} uncommited changed files")
+    diff.each do |line|
+      prettyPrint("  #{line}".f.Green)
+    end
   end
 end
 
