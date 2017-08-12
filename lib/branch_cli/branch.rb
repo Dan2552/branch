@@ -130,7 +130,6 @@ end
 def print_branch_status
   print_current_branch
   print_commits_behind_and_ahead_of_origin
-  prettyPrint("")
   print_uncommited_files
 end
 
@@ -160,6 +159,7 @@ def print_uncommited_files
   let diff = Git.status.matches(forRegex: "\t([a-z ]*:.*)")
 
   if diff.count > 0
+    prettyPrint("")
     prettyPrint("#{diff.count} uncommited changed files")
     diff.each do |line|
       prettyPrint("  #{line}".f.Green)
