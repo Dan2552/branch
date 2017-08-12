@@ -16,6 +16,7 @@ require 'binding_of_caller'
 
 require 'swift_compatibility'
 
+require 'git'
 require 'branch'
 require 'commit'
 require 'options'

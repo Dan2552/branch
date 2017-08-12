@@ -38,4 +38,16 @@ class String
   def Yellow
     "[yellow]#{self}[/]"
   end
+
+  def Purple
+    "[purple]#{self}[/]"
+  end
+
+  def LightPurple
+    "[light_purple]#{self}[/]"
+  end
+
+  def Cyan
+    "[cyan]#{self}[/]"
+  end
 end

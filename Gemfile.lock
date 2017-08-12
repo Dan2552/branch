@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    branch_cli (0.7.0)
+    branch_cli (0.7.1)
       binding_of_caller (~> 0.7.2)
       formatador (~> 0.2.5)
       inquirer (~> 0.2.1)
@@ -38,7 +38,7 @@ GEM
     slop (3.6.0)
     term-ansicolor (1.6.0)
       tins (~> 1.0)
-    tins (1.14.0)
+    tins (1.15.0)
 
 PLATFORMS
   ruby
@@ -49,4 +49,4 @@ DEPENDENCIES
   rspec (~> 3.6)
 
 BUNDLED WITH
-   1.14.6
+   1.15.1

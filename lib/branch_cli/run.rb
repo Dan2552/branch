@@ -8,7 +8,7 @@ def runCommand(command, args: [])
   command_with_args = "#{command} #{args.join(" ")}"
 
   if Options.sharedInstance.isVerbose
-    prettyPrint(command_with_args.f.Blue)
+    prettyPrint(command_with_args.f.Cyan)
   end
 
   Open3.popen3(command_with_args) do |stdin, stdout, stderr, wait_thr|

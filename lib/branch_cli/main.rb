@@ -30,7 +30,7 @@ def main(arguments)
   if options.isBranchSupplied
     setCurrentBranch(Branch.new(name: options.suppliedBranch))
   else
-    printCurrentBranch
-    printGitStatus(preceedingNewline: true)
+    fetch
+    print_branch_status
   end
 end

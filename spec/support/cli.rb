@@ -20,6 +20,10 @@ def clone_remote_repo
   `cd /tmp && git clone https://github.com/Dan2552/branch.git branch-cli-test`
 end
 
+def git_reset(args)
+  `cd /tmp/branch-cli-test && git reset #{args}`
+end
+
 RSpec.configure do |config|
   config.before(:each) { teardown_test_repo; create_test_repo }
   config.after(:each) { teardown_test_repo }
@@ -41,6 +45,6 @@ def touch(filename)
   `cd /tmp/branch-cli-test && touch #{filename}`
 end
 
-def commit
-   `cd /tmp/branch-cli-test && git add . -A && git commit -m "test"`
+def commit(name = "test")
+   `cd /tmp/branch-cli-test && git add . -A && git commit -m "#{name}"`
 end

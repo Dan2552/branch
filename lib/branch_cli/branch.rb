@@ -6,7 +6,7 @@ class Branch < SwiftStruct
   end
 end
 
-def getCurrentBranch
+def get_current_branch
   let result = runCommand("git symbolic-ref HEAD")
   let matches = result.stdout.matches(forRegex: "heads\\/(.*)")
   if matches.count == 0
@@ -27,7 +27,7 @@ def setCurrentBranch(branch)
 end
 
 def detectChanges
-  let status = gitStatus
+  let status = Git.status
   if status.contains("to be committed") || status.contains("for commit:") || status.contains("Untracked files:")
     uncommitedChanges
   end
@@ -40,20 +40,20 @@ end
 def switchBranch(branch)
   runCommand("git checkout #{branch.name}")
 
-  if getCurrentBranch.name != branch.name
+  if get_current_branch.name != branch.name
     runCommand("git checkout -b #{branch.name}")
   end
 
   runCommand("git branch --set-upstream-to=origin/#{branch.name}")
 
-  if getCurrentBranch.name != branch.name
+  if get_current_branch.name != branch.name
     prettyPrint("🤔  Failed to switch branch".f.Red)
     exit(1)
   end
 end
 
 def detectAhead
-  let status = gitStatus
+  let status = Git.status
   if status.contains("can be fast-forwarded.") || status.contains("is ahead of 'origin") || status.contains(" have diverged")
     branchesDiverged
   end
@@ -76,7 +76,7 @@ end
 # nothing to commit, working directory clean
 def branchesDiverged
   prettyPrint("\n😱  You appear to have a diverged branch:".f.Red)
-  let matches = gitStatus.matches(forRegex: "(Your branch .*\\s*.*)")
+  let matches = Git.status.matches(forRegex: "(Your branch .*\\s*.*)")
 
   matches.each do |match|
     prettyPrint(match)
@@ -86,7 +86,7 @@ def branchesDiverged
 end
 
 def resetToOrigin
-  let origin = getCurrentBranch.origin
+  let origin = get_current_branch.origin
   let reset = runCommand("git reset --hard #{origin}")
 
   if reset.exitStatus == 0
@@ -96,8 +96,8 @@ def resetToOrigin
   end
 end
 
-def printCurrentBranch
-  let branchName = (getCurrentBranch && getCurrentBranch.name) || "no branch"
+def print_current_branch
+  let branchName = (get_current_branch && get_current_branch.name) || "no branch"
   prettyPrint("On branch #{branchName.s.Bold}")
 end
 
@@ -123,27 +123,51 @@ end
 
 def uncommitedChanges
   prettyPrint("\n😱  You appear to have uncommited changes:".f.Red)
-  printGitStatus
+  print_branch_status
   promptContinueAnyway
 end
 
-def gitStatus
-  return runCommand("git status").stdout
+def print_branch_status
+  print_current_branch
+  print_commits_behind_and_ahead_of_origin
+  prettyPrint("")
+  print_uncommited_files
 end
 
-def printGitStatus(preceedingNewline: false)
-  let diff = gitStatus.matches(forRegex: "\t([a-z ]*:.*)")
-  if diff.count > 0 && preceedingNewline
+def print_commits_behind_and_ahead_of_origin
+  let branch = get_current_branch
+
+  let behind = Git.log("--oneline HEAD..#{branch.origin}").split("\n")
+  if behind.count > 0
     prettyPrint("")
+    prettyPrint("#{behind.count} commits behind origin")
+    behind.each do |commit|
+      prettyPrint("  #{commit}".f.Purple)
+    end
   end
 
+  let ahead = Git.log("--oneline #{branch.origin}..HEAD").split("\n")
+  if ahead.count > 0
+    prettyPrint("")
+    prettyPrint("#{ahead.count} commits ahead of origin")
+    ahead.each do |commit|
+      prettyPrint("  #{commit}".f.Blue)
+    end
+  end
+end
+
+def print_uncommited_files
+  let diff = Git.status.matches(forRegex: "\t([a-z ]*:.*)")
+
+  prettyPrint("#{diff.count} uncommited changed files")
   diff.each do |line|
-    prettyPrint("\t#{line}".f.Green)
+    prettyPrint("  #{line}".f.Green)
   end
 end
 
 def promptContinueAnyway
-  puts ""
+  prettyPrint("")
+
   response = Ask.list "Continue anyway? Changes will be lost", [
     "Stop",
     "Continue"
@@ -178,8 +202,8 @@ def promptKeepLocal
 end
 
 def addAll
-  runCommand("git reset --mixed")
-  runCommand("git add . -A")
+  Git.reset_mixed
+  Git.add_all
 end
 
 def fetch
