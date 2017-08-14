@@ -123,7 +123,7 @@ end
 
 def uncommitedChanges
   prettyPrint("\n😱  You appear to have uncommited changes:".f.Red)
-  print_branch_status
+  print_uncommited_files
   promptContinueAnyway
 end
 
