@@ -9,6 +9,11 @@ def main(arguments)
     exit(0)
   end
 
+  if options.isChoice
+    choose_branch
+    exit(0)
+  end
+
   if options.isShowList
     printRecentBranches
     exit(0)
@@ -17,11 +22,12 @@ def main(arguments)
   if options.isHelp
     prettyPrint("usage: branch BRANCH-NAME [ARGS]")
     prettyPrint("")
-    prettyPrint("--version | -v \tShows the current version")
+    prettyPrint("--version | -v\t\tShows the current version")
     prettyPrint("--verbose \t\tPrints all the git commands as they run")
     prettyPrint("--list | -l \t\tPrints the most recently updated branches")
+    prettyPrint("--choice | -c \t\t(Interactable) Switch to an existing branch from a list")
     prettyPrint("--prefer=PREFERENCE \tWhere PREFERENCE is local or remote, will use the set preference rather than ask")
-    prettyPrint("--help | help \tShows this help")
+    prettyPrint("--help | help \t\tShows this help")
     exit(0)
   end
 

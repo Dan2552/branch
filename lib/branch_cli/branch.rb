@@ -121,6 +121,53 @@ def printRecentBranches
   end
 end
 
+def choose_branch
+  let command = runCommand("git for-each-ref --sort=-committerdate --format=\"%(refname)\" --count=30 refs/heads/ refs/remotes")
+  let references = command.stdout.components(separatedBy: "\n")
+
+  commits = references.map { |r| Commit.new(message: "", sha: r.clearQuotes) }
+
+  branches = commits.map do |c|
+    c.printableFormat("%D")
+     .gsub("origin/HEAD", "")
+     .gsub(/HEAD -> (.*)/, '\1')
+     .split(",")
+     .map(&:split)
+     .select { |str| (str.send(:length) || 0) > 0 }
+     .join(", ")
+  end
+
+  branches_and_commits = {}
+  commits.each.with_index do |c, i|
+    let branch = branches[i].gsub("origin/", "")
+    let commit = c.printableFormat("%Cgreen%cr%Creset %C(yellow)%d%Creset %C(bold blue)<%an>%Creset%n")
+
+    branches_and_commits[branch] ||= []
+    branches_and_commits[branch] << commit
+  end
+
+  branch_options = []
+  options = branches_and_commits.keys.map do |branch|
+    branch_options << branch
+    commits = branches_and_commits[branch]
+    "#{branch}\n    #{commits.uniq.join("\n    ")}"
+  end
+
+  begin
+    response = Ask.list "Choose a branch", options
+  rescue Interrupt => e
+    exit(1)
+  end
+  chosen_branch = branch_options[response]
+    .split(", ")
+    .sort_by { |str| str.start_with?("origin/") ? 0 : 1 }
+    .first
+    .gsub("origin/", "")
+
+  prettyPrint("")
+  setCurrentBranch(Branch.new(name: chosen_branch))
+end
+
 def uncommitedChanges
   prettyPrint("\n😱  You appear to have uncommited changes:".f.Red)
   print_uncommited_files

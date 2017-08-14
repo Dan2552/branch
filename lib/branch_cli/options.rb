@@ -13,6 +13,7 @@ class Options < SwiftObject
   var isHelp = false
   var isTestRebase = false
   var isShowList = false
+  var isChoice = false
   var preferLocal = false
   var preferRemote = false
 
@@ -39,6 +40,10 @@ class Options < SwiftObject
 
     if arguments.contains("--list") || arguments.contains("-l")
       self.isShowList = true
+    end
+
+    if arguments.contains("--choice") || arguments.contains("-c")
+      self.isChoice = true
     end
 
     if arguments.contains("--prefer=local")
