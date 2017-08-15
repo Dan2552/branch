@@ -147,17 +147,21 @@ def choose_branch
   end
 
   branch_options = []
+  max_key = branches_and_commits.keys.map(&:length).max
   options = branches_and_commits.keys.map do |branch|
     branch_options << branch
     commits = branches_and_commits[branch]
-    "#{branch}\n    #{commits.uniq.join("\n    ")}"
+
+    spacing = ' ' * (max_key - branch.length + 2)
+    "#{branch}#{spacing}#{commits.uniq.join("\n  #{' ' * branch.length}#{spacing}")}"
   end
 
   begin
     response = Ask.list "Choose a branch", options
-  rescue Interrupt => e
+  rescue Interrupt
     exit(1)
   end
+
   chosen_branch = branch_options[response]
     .split(", ")
     .sort_by { |str| str.start_with?("origin/") ? 0 : 1 }
