@@ -133,13 +133,15 @@ def choose_branch
      .gsub(/HEAD -> (.*)/, '\1')
      .split(",")
      .map(&:split)
-     .select { |str| (str.send(:length) || 0) > 0 }
+     .select { |a| (a.send(:length) || 0) > 0 }
+     .map { |a| a.map { |str| str.gsub("origin/", "") } }
+     .uniq
      .join(", ")
   end
 
   branches_and_commits = {}
   commits.each.with_index do |c, i|
-    let branch = branches[i].gsub("origin/", "")
+    let branch = branches[i]
     let commit = c.printableFormat("%Cgreen%cr%Creset %C(yellow)%d%Creset %C(bold blue)<%an>%Creset%n")
 
     branches_and_commits[branch] ||= []
