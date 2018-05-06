@@ -9,7 +9,10 @@ The assumptions `branch` makes are:
 ![Screenshot](screenshot.png)
 
 ## Installation
-`gem install branch_cli`
+
+You can automatically install `branch` and more from https://github.com/Dan2552/gathering-of-scripts
+
+Or you can compile from source using `docker-compose run compile`.
 
 ## Basic usage
 
