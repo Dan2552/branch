@@ -1,7 +1,10 @@
 def execute(args)
   @original = Dir.pwd
   Dir.chdir "/tmp/branch-cli-test"
-  main(args)
+  # system( #{args.join(' ')}")
+  # main(args)
+  command = "/Users/dan2552/Dropbox/branch/mruby/build/x86_64-apple-darwin14/bin/branch"
+  @stdout, @stderr, @status = Open3.capture3(*([command.split(" "), args].flatten))
 rescue SystemExit
 end
 
@@ -11,13 +14,16 @@ def create_test_repo
 end
 
 def teardown_test_repo
+  @stdout = nil
+  @stderr = nil
+  @status = nil
   `rm -rf /tmp/branch-cli-test`
   Dir.chdir "/tmp"
 end
 
 def clone_remote_repo
   teardown_test_repo
-  `cd /tmp && git clone https://github.com/Dan2552/branch.git branch-cli-test`
+  `cd /tmp && git clone https://github.com/Dan2552/branch.git branch-cli-test >/dev/null 2>&1`
 end
 
 def git_reset(args)
@@ -30,11 +36,23 @@ RSpec.configure do |config|
 end
 
 def expect_output(out)
-  expect { subject }.to output(out).to_stdout
+  subject
+
+  if out.is_a? Regexp
+    expect(@stdout).to match(out)
+  else
+    expect(@stdout).to include(out)
+  end
 end
 
 def expect_to_not_output(out)
-  expect { subject }.to_not output(out).to_stdout
+  subject
+
+  if out.is_a? Regexp
+    expect(@stdout).to_not match(out)
+  else
+    expect(@stdout).to_not include(out)
+  end
 end
 
 def expect_branch(branch)

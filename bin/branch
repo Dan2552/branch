@@ -1,4 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'branch_cli'
-main(ARGV)

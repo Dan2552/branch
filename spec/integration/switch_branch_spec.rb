@@ -21,9 +21,28 @@ RSpec.describe "switching branch" do
     before { touch("changes") }
 
     it "asks whether to discard changes" do
-      expect(Ask).to receive(:list)
-                 .with("Continue anyway? Changes will be lost", ["Stop", "Continue"])
-      subject
+      expect_output /Continue anyway\? Changes will be lost/
+    end
+
+    context "when prefer discard is specified" do
+      let(:args) { %w{new-branch --discard=true} }
+
+      it "prints that it's using local branch" do
+        expect_output /Using local branch \(no origin branch found\)/
+      end
+
+      it "switches the branch" do
+        subject
+        expect_branch "new-branch"
+      end
+    end
+
+    context "when prefer keep is specified" do
+      let(:args) { %w{new-branch --discard=false} }
+
+      it "prints that it's using remote branch" do
+        expect_output /Aborted \(user specified\)/
+      end
     end
   end
 
@@ -48,9 +67,26 @@ RSpec.describe "switching branch" do
       let(:args) { %w{master} }
 
       it "asks whether to use the remote or local" do
-        expect(Ask).to receive(:list)
-                   .with("Keep remote or local copy?", ["Remote", "Local"])
-        subject
+        # expect(Ask).to receive(:list)
+        #            .with("Keep remote or local copy?", ["Remote", "Local"])
+
+        expect_output /Keep remote or local copy\?/
+      end
+
+      context "when prefer local is specified" do
+        let(:args) { %w{master --prefer=local} }
+
+        it "prints that it's using local branch" do
+          expect_output /Using local branch \(user specified\)/
+        end
+      end
+
+      context "when prefer remote is specified" do
+        let(:args) { %w{master --prefer=remote} }
+
+        it "prints that it's using remote branch" do
+          expect_output /Using remote branch/
+        end
       end
     end
   end
