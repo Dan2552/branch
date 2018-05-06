@@ -1,6 +1,7 @@
-require 'rubygems'
+# require 'rubygems'
+require 'open3'
 require 'pry'
-require 'branch_cli'
+require_relative 'support/compile'
 require_relative 'support/cli'
 
 RSpec.configure do |config|
@@ -74,4 +75,6 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = :random
+
+  config.before(:suite) { compile }
 end

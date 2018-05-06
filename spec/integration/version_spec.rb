@@ -3,7 +3,6 @@ RSpec.describe "Version" do
   let(:args) { %w{--version} }
 
   it "prints out the version number of the release" do
-    spec = Gem::Specification::load("#{BranchCli.root}/branch_cli.gemspec")
-    expect_output /branch cli #{spec.version}/
+    expect_output /branch cli 0.8.0/
   end
 end

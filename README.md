@@ -9,7 +9,10 @@ The assumptions `branch` makes are:
 ![Screenshot](screenshot.png)
 
 ## Installation
-`gem install branch_cli`
+
+You can automatically install `branch` and more from https://github.com/Dan2552/gathering-of-scripts
+
+Or you can compile from source using `docker-compose run compile`.
 
 ## Basic usage
 
@@ -23,10 +26,11 @@ The assumptions `branch` makes are:
   - Warns if you have local changes and prompts on whether to continue
   - Warns if the remote branch has diverged and prompts on whether you want to keep your local branch or to reset with the remote
 - Formatted list of most recent branches with `--list` argument
+- Choose a branch from a list using `--choice` argument
 
 ## Future ideas/plans
 
 - Recording base branch when creating a new one
 - Suggestion to rebase if it detects that you should (i.e. automatic `git pull --rebase` and `git rebase origin/base-branch`)
 - Nicer flow for rebasing (visual representation of progress)
-- clear indication of files in conflict (as well as automatic indication of when you have resolved them)
+- Clear indication of files in conflict (as well as automatic indication of when you have resolved them)
