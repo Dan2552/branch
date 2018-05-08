@@ -1,3 +1,4 @@
 def compile
-  system("cd /Users/dan2552/Dropbox/branch && docker-compose run compile")
+  root = File.expand_path("..", __dir__)
+  system("cd #{root} && docker-compose run compile")
 end

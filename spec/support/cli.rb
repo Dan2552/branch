@@ -3,7 +3,8 @@ def execute(args)
   Dir.chdir "/tmp/branch-cli-test"
   # system( #{args.join(' ')}")
   # main(args)
-  command = "/Users/dan2552/Dropbox/branch/mruby/build/x86_64-apple-darwin14/bin/branch"
+  root = File.expand_path("../..", __dir__)
+  command = "#{root}/mruby/build/x86_64-apple-darwin14/bin/branch"
   @stdout, @stderr, @status = Open3.capture3(*([command.split(" "), args].flatten))
 rescue SystemExit
 end
@@ -33,6 +34,11 @@ end
 RSpec.configure do |config|
   config.before(:each) { teardown_test_repo; create_test_repo }
   config.after(:each) { teardown_test_repo }
+end
+
+def is_expected_to_exit_with(x)
+  @status || subject
+  expect(@status.exitstatus).to eq(x)
 end
 
 def expect_output(out)

@@ -193,7 +193,7 @@ def print_commits_behind_and_ahead_of_origin
     pretty_print('')
     pretty_print("#{behind.count} commits behind origin")
     behind.each do |commit|
-      pretty_print("  #{commit}".Purple)
+      pretty_print("  #{commit}".magenta)
     end
   end
 

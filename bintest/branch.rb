@@ -13,5 +13,5 @@ assert('version') do
   output, status = Open3.capture2(BIN_PATH, "--version")
 
   assert_true status.success?, "Process did not exit cleanly"
-  assert_include output, "0.8.0"
+  assert_include output, "0.8.1"
 end
