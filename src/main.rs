@@ -1,5 +1,6 @@
 #[macro_use] extern crate shell;
 
+use std::process::exit;
 use clap::{App, load_yaml};
 
 mod status;
@@ -12,6 +13,7 @@ mod output;
 mod list_of_branches;
 
 use configuration::Configuration;
+use crate::output::output_line_in_red;
 
 #[macro_use] extern crate prettytable;
 
@@ -35,7 +37,12 @@ fn main() {
 
     let state = state::get_local::<Configuration>();
 
-    git_helpers::add_all();
+    let add_success = git_helpers::add_all();
+
+    if !add_success {
+      output_line_in_red("Local git repository not found");
+      exit(1);
+    }
 
     if state.choice {
         let target_branch = list_of_branches::choose_from_list();

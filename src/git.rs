@@ -55,7 +55,7 @@ pub fn reset(mode: ResetMode, commit: &str) -> shell::ShellResult {
     command.run()
 }
 
-pub fn add(options: &str) {
+pub fn add(options: &str) -> shell::ShellResult {
     let to_execute = format!("git add {}", options);
     let mut command = cmd!(&to_execute);
 
@@ -65,7 +65,7 @@ pub fn add(options: &str) {
 
     command.command.stdout(Stdio::piped());
     command.command.stderr(Stdio::piped());
-    command.run().expect("Failed to execute git");
+    command.run()
 }
 
 pub fn fetch() {

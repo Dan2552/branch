@@ -1,6 +1,6 @@
 [package]
 name = "branch"
-version = "0.9.1"
+version = "0.9.2"
 authors = ["Daniel Inkpen <dan2552@gmail.com>"]
 edition = "2018"
 

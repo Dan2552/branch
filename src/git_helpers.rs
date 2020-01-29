@@ -1,10 +1,13 @@
 use crate::git;
 use crate::output::output_line_in_green;
 use regex::Regex;
+use shell::ShellResultExt;
 
-pub fn add_all() {
+pub fn add_all() -> bool {
     let _ = git::reset(git::ResetMode::Mixed, &"");
-    git::add(". -A");
+    let output = git::add(". -A");
+
+    output.code() == 0
 }
 
 pub fn current_branch() -> String {
