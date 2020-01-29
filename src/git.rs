@@ -114,7 +114,12 @@ pub fn log(options: &str) -> String {
     }
 
     command.command.stderr(Stdio::piped());
-    command.stdout_utf8().expect("Failed to execute git")
+    let result = command.stdout_utf8();
+
+    match result {
+        Ok(output) => output,
+        Err(_) => String::new()
+    }
 }
 
 pub fn symbolic_ref(name: &str) -> String {
