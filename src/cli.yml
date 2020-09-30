@@ -1,0 +1,30 @@
+name: branch
+version: "0.9.2"
+author: Daniel Inkpen
+args:
+    - target_branch:
+        help: The git branch to switch to
+        empty_values: false
+    - verbose:
+        long: verbose
+        help: Prints all the git commands as they run
+    - list:
+        long: list
+        short: l
+        help: Prints the most recently updated branches
+    - choice:
+        long: choice
+        short: c
+        help: Interactably choose existing branch from a list
+    - local_or_remote:
+        long: prefer
+        takes_value: true
+        possible_values:
+            - remote
+            - local
+    - discard:
+        long: discard
+        takes_value: true
+        possible_values:
+            - "true"
+            - "false"
