@@ -55,6 +55,19 @@ pub fn reset(mode: ResetMode, commit: &str) -> shell::ShellResult {
     command.run()
 }
 
+pub fn restore_staged(file: &str) -> shell::ShellResult {
+    let to_execute = format!("git restore --staged {}", file);
+    let mut command = cmd!(&to_execute);
+
+    if config().is_verbose {
+        output_line_in_blue(&to_execute);
+    }
+
+    command.command.stdout(Stdio::piped());
+    command.command.stderr(Stdio::piped());
+    command.run()
+}
+
 pub fn add(options: &str) -> shell::ShellResult {
     let to_execute = format!("git add {}", options);
     let mut command = cmd!(&to_execute);

@@ -10,23 +10,33 @@ pub fn set_branch(target_branch: &str) {
     println!("Switching to branch {}...", format_as_bold(target_branch));
 
     git::fetch();
-    detect_changes();
+    if git_helpers::has_uncommitted_files() {
+        output_line_in_yellow("\nThere are uncommitted changes");
+        git_helpers::print_uncommited_files();
+        let user_choice = prompt::continue_anyway();
+
+        match user_choice {
+            prompt::Answer::Abort => {
+              output_line_in_red("Aborted (user specified)");
+              std::process::exit(1);
+            },
+            prompt::Answer::ContinueAndDiscard => {
+              output_line_in_green("Changes discarded (user specified)");
+            }
+            prompt::Answer::ContinueAndCarry => {
+              output_line_in_green("Changes being carried over (user specified)");
+              let _ = git::restore_staged(".");
+            }
+        }
+    }
+
     let _ = git::reset(git::ResetMode::Hard, "");
+
     switch_branch(target_branch);
     detect_ahead(target_branch);
     reset_to_origin(target_branch);
-}
 
-fn detect_changes() {
-    let files = git_helpers::uncommitted_files();
-
-    if files.len() == 0 {
-        return
-    }
-
-    output_line_in_yellow("\nThere are uncommitted changes");
-    git_helpers::print_uncommited_files();
-    prompt::continue_anyway()
+    let _ = git_helpers::add_all();
 }
 
 fn switch_branch(target_branch: &str) {

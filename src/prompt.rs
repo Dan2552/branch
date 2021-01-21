@@ -10,14 +10,20 @@ use crate::output::{output_line_in_red, output_line_in_green, output_line_in_red
 
 enum Question {
     RemoteOrLocal,
-    StopOrContinue
+    StopOrContinueOrCarry
+}
+
+pub enum Answer {
+    Abort,
+    ContinueAndDiscard,
+    ContinueAndCarry
 }
 
 fn config() -> &'static Configuration {
     state::get_local::<Configuration>()
 }
 
-pub fn continue_anyway() {
+pub fn continue_anyway() -> Answer {
     println!("");
 
     let response = {
@@ -26,8 +32,7 @@ pub fn continue_anyway() {
         } else if config().prefer_discard {
             1
         } else {
-            // 0
-            let answer = ask(Question::StopOrContinue);
+            let answer = ask(Question::StopOrContinueOrCarry);
             match answer {
                 Ok(index) => index,
                 Err(_) => {
@@ -38,11 +43,11 @@ pub fn continue_anyway() {
         }
     };
 
-    if response == 0 {
-        output_line_in_red("Aborted (user specified)");
-        std::process::exit(1);
-    } else {
-        output_line_in_green("Changes discarded (user specified)");
+    match response {
+      0 => Answer::Abort,
+      1 => Answer::ContinueAndDiscard,
+      2 => Answer::ContinueAndCarry,
+      _ => panic!("Unrecognised answer")
     }
 }
 
@@ -84,10 +89,15 @@ fn ask(question: Question) -> Result<i32, io::Error> {
             remote_or_local_dialog(choice);
             5
         },
-        Question::StopOrContinue => {
+        Question::StopOrContinueOrCarry => {
             stop_or_continue_dialog(choice);
-            6
+            10
         }
+    };
+
+    let maximum_choice_index = match question {
+        Question::RemoteOrLocal => 1,
+        Question::StopOrContinueOrCarry => 2
     };
 
     let stdout = stdout().into_raw_mode()?;
@@ -103,7 +113,7 @@ fn ask(question: Question) -> Result<i32, io::Error> {
             },
             Key::Down | Key::Right => {
                 choice += 1;
-                if choice > 1 {
+                if choice > maximum_choice_index {
                     choice = 0
                 }
             },
@@ -123,7 +133,7 @@ fn ask(question: Question) -> Result<i32, io::Error> {
         print!("{}{}", cursor::Up(size_of_question), clear::AfterCursor);
         match question {
             Question::RemoteOrLocal => remote_or_local_dialog(choice),
-            Question::StopOrContinue => stop_or_continue_dialog(choice)
+            Question::StopOrContinueOrCarry => stop_or_continue_dialog(choice)
         };
         stdout.activate_raw_mode().unwrap();
     }
@@ -144,21 +154,38 @@ fn stop_or_continue_dialog(selected_button: i32) {
 
     let reset = "\x1B[0m";
 
-    let left_button_bg;
-    let left_button_fg;
-    let right_button_bg;
-    let right_button_fg;
+    let top_button_bg;
+    let top_button_fg;
+    let middle_button_bg;
+    let middle_button_fg;
+    let bottom_button_bg;
+    let bottom_button_fg;
 
-    if selected_button == 0 {
-        left_button_bg = blue_bg;
-        left_button_fg = white_fg;
-        right_button_bg = grey_bg;
-        right_button_fg = black_fg;
-    } else {
-        left_button_bg = grey_bg;
-        left_button_fg = black_fg;
-        right_button_bg = blue_bg;
-        right_button_fg = white_fg;
+    match selected_button {
+      0 => {
+        top_button_bg = blue_bg;
+        top_button_fg = white_fg;
+        middle_button_bg = grey_bg;
+        middle_button_fg = black_fg;
+        bottom_button_bg = grey_bg;
+        bottom_button_fg = black_fg;
+      },
+      1 => {
+        top_button_bg = grey_bg;
+        top_button_fg = black_fg;
+        middle_button_bg = blue_bg;
+        middle_button_fg = white_fg;
+        bottom_button_bg = grey_bg;
+        bottom_button_fg = black_fg;
+      }
+      _ => {
+        top_button_bg = grey_bg;
+        top_button_fg = black_fg;
+        middle_button_bg = grey_bg;
+        middle_button_fg = black_fg;
+        bottom_button_bg = blue_bg;
+        bottom_button_fg = white_fg;
+      }
     }
 
     println!(
@@ -172,7 +199,7 @@ fn stop_or_continue_dialog(selected_button: i32) {
         black_fg,
         white_bg,
         style::Bold,
-        "Changes will be lost.",
+        "There are uncommitted changes.",
         color::Fg(color::Reset),
         reset,
         style::Reset
@@ -196,17 +223,56 @@ fn stop_or_continue_dialog(selected_button: i32) {
         reset
     );
     println!(
-        "{}{:^5}{}{}{:^8}{}{:^4}{}{}{:^12}{}{:^4}{}",
+        "{}{:^1}{}{}{:^13}{}{:^12}{}{:^2}{}",
         white_bg,
         "",
-        left_button_bg,
-        left_button_fg,
-        "Stop",
+        top_button_bg,
+        top_button_fg,
+        "",
+        "Abort",
+        "",
         white_bg,
         "",
-        right_button_bg,
-        right_button_fg,
-        "Continue",
+        reset
+    );
+    println!(
+        "{}{}{:^33}{}{}",
+        black_fg,
+        white_bg,
+        "",
+        color::Fg(color::Reset),
+        reset
+    );
+    println!(
+        "{}{:^1}{}{}{:^1}{}{:^1}{}{:^2}{}",
+        white_bg,
+        "",
+        middle_button_bg,
+        middle_button_fg,
+        "",
+        "Continue and discard changes",
+        "",
+        white_bg,
+        "",
+        reset
+    );
+    println!(
+        "{}{}{:^33}{}{}",
+        black_fg,
+        white_bg,
+        "",
+        color::Fg(color::Reset),
+        reset
+    );
+    println!(
+        "{}{:^1}{}{}{:^2}{}{:^2}{}{:^2}{}",
+        white_bg,
+        "",
+        bottom_button_bg,
+        bottom_button_fg,
+        "",
+        "Continue and carry changes",
+        "",
         white_bg,
         "",
         reset

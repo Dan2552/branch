@@ -67,6 +67,10 @@ pub fn uncommitted_files() -> Vec<String> {
     files
 }
 
+pub fn has_uncommitted_files() -> bool {
+    uncommitted_files().len() != 0
+}
+
 fn commits_between(a: &str, b: &str) -> Vec<String> {
     let options = format!("--oneline {}..{}", a, b);
     let log = git::log(&options);
