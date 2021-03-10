@@ -22,21 +22,35 @@ pub fn set_branch(target_branch: &str) {
             },
             prompt::Answer::ContinueAndDiscard => {
               output_line_in_green("Changes discarded (user specified)");
+              let _ = git::reset(git::ResetMode::Hard, "");
+              switch_branch(target_branch);
+              detect_ahead(target_branch);
+              reset_to_origin(target_branch);
             }
             prompt::Answer::ContinueAndCarry => {
               output_line_in_green("Changes being carried over (user specified)");
-              let _ = git::restore_staged(".");
+              let commit = stash_as_a_commit();
+
+              switch_branch(target_branch);
+              detect_ahead(target_branch);
+              reset_to_origin(target_branch);
+
+              let _ = git::cherry_pick(&commit);
+              let _ = git::reset(git::ResetMode::Soft, "HEAD^");
             }
         }
     }
 
-    let _ = git::reset(git::ResetMode::Hard, "");
-
-    switch_branch(target_branch);
-    detect_ahead(target_branch);
-    reset_to_origin(target_branch);
-
     let _ = git_helpers::add_all();
+}
+
+fn stash_as_a_commit() -> String {
+  let _ = git_helpers::add_all();
+  let _ = git::commit("TEMP_BRANCH_COMMIT");
+  let temp_commit_hash = git::log(&"-1 --pretty=format:\"%H\"").trim().to_string();
+  let _ = git::reset(git::ResetMode::Hard, "HEAD~1");
+
+  temp_commit_hash
 }
 
 fn switch_branch(target_branch: &str) {
