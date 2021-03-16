@@ -39,6 +39,11 @@ pub fn set_branch(target_branch: &str) {
               let _ = git::reset(git::ResetMode::Soft, "HEAD^");
             }
         }
+    } else {
+      let _ = git::reset(git::ResetMode::Hard, "");
+      switch_branch(target_branch);
+      detect_ahead(target_branch);
+      reset_to_origin(target_branch);
     }
 
     let _ = git_helpers::add_all();
