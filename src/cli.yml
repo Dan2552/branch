@@ -28,3 +28,7 @@ args:
         possible_values:
             - "true"
             - "false"
+    - default:
+        long: default
+        short: d
+        help: Switch to the remote's default branch (usually main or master)

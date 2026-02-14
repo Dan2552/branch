@@ -4,7 +4,6 @@ use crate::status;
 use crate::prompt;
 use crate::output::{output_line_in_red, output_line_in_green, output_line_in_yellow};
 use crate::output::format_as_bold;
-use shell::ShellResultExt;
 
 pub fn set_branch(target_branch: &str) {
     println!("Switching to branch {}...", format_as_bold(target_branch));
@@ -110,7 +109,7 @@ fn reset_to_origin(target_branch: &str) {
     let origin = format!("origin/{}", target_branch);
     let output = git::reset(git::ResetMode::Hard, &origin);
 
-    if output.code() == 0 {
+    if output.code == 0 {
         output_line_in_green("Using remote branch");
     } else {
         output_line_in_green("Using local branch (no origin branch found)");

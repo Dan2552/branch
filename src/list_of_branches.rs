@@ -2,8 +2,7 @@ use crate::git;
 use std::process::Command;
 use regex::Regex;
 
-use prettytable::Table;
-use prettytable::format;
+use tabled::settings::Style;
 use termion::{clear, cursor};
 use std::io::{stdout, stdin};
 use termion::event::Key;
@@ -194,32 +193,43 @@ fn restore_screen() {
     print!("{}{}{}\x1B[?1049l", clear::All, cursor::Goto(1, 1), cursor::Show);
 }
 
+
 fn draw_choice_table(table: &Vec<BranchListRow>, choice: i32) {
-    let mut table_printer = Table::new();
-    table_printer.set_format(*format::consts::FORMAT_BOX_CHARS);
+    let data: Vec<Vec<String>> = table.iter().enumerate().map(|(idx, row)| {
+        let cursor = if choice == idx as i32 { ">" } else { "" };
+        vec![
+            cursor.to_string(),
+            row.local_branch_name(),
+            row.remote_local_state(),
+            row.derived_modified_ago_description(),
+        ]
+    }).collect();
 
-    let mut current_index = 0;
-
-    for row in table {
-        let mut cursor = "";
-        if choice == current_index {
-            cursor = ">";
-        }
-        table_printer.add_row(row![cursor, row.local_branch_name(), row.remote_local_state(), row.derived_modified_ago_description()]);
-        current_index += 1;
+    let mut builder = tabled::builder::Builder::default();
+    for row in data {
+        builder.push_record(row);
     }
-
-    table_printer.printstd();
+    let mut table_printer = builder.build();
+    table_printer.with(Style::modern());
+    println!("{}", table_printer);
 }
 
 fn draw_simple_table(table: &Vec<BranchListRow>) {
-    let mut table_printer = Table::new();
-    table_printer.set_format(*format::consts::FORMAT_BOX_CHARS);
+    let data: Vec<Vec<String>> = table.iter().map(|row| {
+        vec![
+            row.local_branch_name(),
+            row.remote_local_state(),
+            row.derived_modified_ago_description(),
+        ]
+    }).collect();
 
-    for row in table {
-        table_printer.add_row(row![row.local_branch_name(), row.remote_local_state(), row.derived_modified_ago_description()]);
+    let mut builder = tabled::builder::Builder::default();
+    for row in data {
+        builder.push_record(row);
     }
-    table_printer.printstd();
+    let mut table_printer = builder.build();
+    table_printer.with(Style::modern());
+    println!("{}", table_printer);
 }
 
 fn build_table_data() -> Vec<BranchListRow> {

@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Configuration { 
     pub is_verbose: bool, 
     pub prefer_local: bool,
@@ -6,5 +7,6 @@ pub struct Configuration {
     pub prefer_keep: bool,
     pub list: bool,
     pub choice: bool,
+    pub default: bool,
     pub target_branch: String
 }

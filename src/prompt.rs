@@ -20,7 +20,7 @@ pub enum Answer {
 }
 
 fn config() -> &'static Configuration {
-    state::get_local::<Configuration>()
+    crate::get_config()
 }
 
 pub fn continue_anyway() -> Answer {

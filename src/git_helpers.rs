@@ -1,13 +1,45 @@
 use crate::git;
 use crate::output::output_line_in_green;
 use regex::Regex;
-use shell::ShellResultExt;
+
+pub fn remote_default_branch() -> String {
+    // Try to get the default branch from the remote HEAD
+    let symbolic_ref = git::symbolic_ref("refs/remotes/origin/HEAD");
+    
+    if !symbolic_ref.is_empty() {
+        // Output is like "refs/remotes/origin/main"
+        let branch = symbolic_ref
+            .replace("refs/remotes/origin/", "")
+            .trim()
+            .to_owned();
+        
+        if !branch.is_empty() {
+            return branch;
+        }
+    }
+    
+    // Fallback: try common default branch names
+    // Check if origin/main exists
+    let main_check = git::branch("-r --list origin/main");
+    if !main_check.trim().is_empty() {
+        return String::from("main");
+    }
+    
+    // Check if origin/master exists
+    let master_check = git::branch("-r --list origin/master");
+    if !master_check.trim().is_empty() {
+        return String::from("master");
+    }
+    
+    // Last resort fallback
+    String::from("main")
+}
 
 pub fn add_all() -> bool {
     let _ = git::reset(git::ResetMode::Mixed, &"");
     let output = git::add(". -A");
 
-    output.code() == 0
+    output.code == 0
 }
 
 pub fn current_branch() -> String {
