@@ -6,6 +6,7 @@ use clap::{App, load_yaml};
 mod status;
 mod git;
 mod git_helpers;
+mod github;
 mod branch;
 mod prompt;
 mod configuration;
@@ -25,7 +26,17 @@ pub fn get_config() -> &'static Configuration {
 fn main() {
     let yaml = load_yaml!("cli.yml");
     let matches = App::from_yaml(yaml).get_matches();
-    let branch = String::from(matches.value_of("target_branch").unwrap_or(""));
+    let mut branch = String::from(matches.value_of("target_branch").unwrap_or(""));
+
+    if github::is_url(&branch) {
+        match github::branch_from_url(&branch, matches.is_present("verbose")) {
+            Ok(resolved) => branch = resolved,
+            Err(message) => {
+                output_line_in_red(&message);
+                exit(1);
+            }
+        }
+    }
 
     let config = Configuration {
         is_verbose: matches.is_present("verbose"),

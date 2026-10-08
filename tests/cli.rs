@@ -1,4 +1,5 @@
 use std::fs;
+use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -97,6 +98,28 @@ impl GitFixture {
             .expect("failed to run branch")
     }
 
+    fn run_branch_with_fake_gh(&self, args: &[&str], gh_script: &str) -> Output {
+        let bin = self._root.path().join("bin");
+        fs::create_dir_all(&bin).expect("failed to create fake bin directory");
+        let gh = bin.join("gh");
+        fs::write(&gh, format!("#!/bin/sh\n{gh_script}\n")).expect("failed to write fake gh");
+        fs::set_permissions(&gh, fs::Permissions::from_mode(0o755))
+            .expect("failed to make fake gh executable");
+
+        let path = format!(
+            "{}:{}",
+            path_str(&bin),
+            std::env::var("PATH").unwrap_or_default()
+        );
+
+        Command::new(env!("CARGO_BIN_EXE_branch"))
+            .args(args)
+            .current_dir(&self.checkout)
+            .env("PATH", path)
+            .output()
+            .expect("failed to run branch")
+    }
+
     fn current_branch(&self) -> String {
         let output = git_output(&self.checkout, &["branch", "--show-current"]);
         String::from_utf8(output.stdout)
@@ -185,6 +208,51 @@ fn list_combines_local_and_remote_branch_information() {
     assert_stdout_contains(&output, "Local + Remote");
     assert_stdout_contains(&output, "feature");
     assert_stdout_contains(&output, "Remote only");
+}
+
+#[test]
+fn switches_to_the_branch_of_a_github_pull_request_url() {
+    let fixture = GitFixture::new();
+
+    let output = fixture.run_branch_with_fake_gh(
+        &["https://github.com/owner/repo/pull/42/files"],
+        r#"[ "$1 $2 $3" = "pr view https://github.com/owner/repo/pull/42" ] && echo feature"#,
+    );
+
+    assert!(
+        output.status.success(),
+        "branch failed:\n{}",
+        output_text(&output)
+    );
+    assert_eq!(fixture.current_branch(), "feature");
+}
+
+#[test]
+fn reports_an_error_when_gh_cannot_resolve_a_pull_request_url() {
+    let fixture = GitFixture::new();
+
+    let output = fixture.run_branch_with_fake_gh(
+        &["https://github.com/owner/repo/pull/42"],
+        "echo 'no pull requests found' >&2; exit 1",
+    );
+
+    assert_eq!(output.status.code(), Some(1));
+    assert_stdout_contains(&output, "no pull requests found");
+    assert_eq!(fixture.current_branch(), "main");
+}
+
+#[test]
+fn switches_to_the_branch_of_a_github_tree_url() {
+    let fixture = GitFixture::new();
+
+    let output = fixture.run_branch(&["https://github.com/owner/repo/tree/feature"]);
+
+    assert!(
+        output.status.success(),
+        "branch failed:\n{}",
+        output_text(&output)
+    );
+    assert_eq!(fixture.current_branch(), "feature");
 }
 
 fn git(directory: &Path, args: &[&str]) {

@@ -3,7 +3,7 @@ version: "0.10.2"
 author: Daniel Inkpen
 args:
     - target_branch:
-        help: The git branch to switch to
+        help: The git branch to switch to (or a GitHub pull request or branch URL)
         empty_values: false
     - verbose:
         long: verbose
